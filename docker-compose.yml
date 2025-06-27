@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # Base de datos MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: farmacia_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: farmacia123
+      MYSQL_DATABASE: bd_farmacia
+      MYSQL_USER: farmacia_user
+      MYSQL_PASSWORD: farmacia_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - farmacia_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend-farmacia
+      dockerfile: Dockerfile
+    container_name: farmacia_backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_USER: farmacia_user
+      DB_PASSWORD: farmacia_pass
+      DB_NAME: bd_farmacia
+      DB_PORT: 3306
+      NODE_ENV: production
+    ports:
+      - "3002:3002"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - farmacia_network
+    volumes:
+      - ./backend-farmacia:/app
+      - /app/node_modules
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./frontend-farmacia
+      dockerfile: Dockerfile
+    container_name: farmacia_frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:3002
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - farmacia_network
+
+  # Nginx como proxy reverso (opcional)
+  nginx:
+    image: nginx:alpine
+    container_name: farmacia_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - farmacia_network
+
+# Volúmenes persistentes
+volumes:
+  mysql_data:
+    driver: local
+
+# Red personalizada
+networks:
+  farmacia_network:
+    driver: bridge
