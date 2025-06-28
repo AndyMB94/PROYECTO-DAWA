@@ -11,7 +11,7 @@ export default function LaboratoriosPage() {
 
   const fetchLaboratorios = async () => {
     try {
-      const res = await fetch('http://localhost:3002/api/laboratorios');
+      const res = await fetch('http://3.148.115.134:3002/api/laboratorios');
       const data = await res.json();
       setLaboratorios(data);
     } catch (error) {
@@ -25,7 +25,7 @@ export default function LaboratoriosPage() {
     if (!confirm('¿Estás seguro de eliminar este laboratorio?')) return;
 
     try {
-      const res = await fetch(`http://localhost:3002/api/laboratorios/${codLab}`, {
+      const res = await fetch(`http://3.148.115.134:3002/api/laboratorios/${codLab}`, {
         method: 'DELETE',
       });
 

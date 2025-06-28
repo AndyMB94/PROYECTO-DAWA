@@ -11,7 +11,7 @@ export default function MedicamentosPage() {
 
   const fetchMedicamentos = async () => {
     try {
-      const res = await fetch('http://localhost:3002/api/medicamentos');
+      const res = await fetch('http://3.148.115.134:3002/api/medicamentos');
       const data = await res.json();
       setMedicamentos(data);
     } catch (error) {
@@ -25,7 +25,7 @@ export default function MedicamentosPage() {
     if (!confirm('¿Estás seguro de eliminar este medicamento?')) return;
 
     try {
-      const res = await fetch(`http://localhost:3002/api/medicamentos/${codMedicamento}`, {
+      const res = await fetch(`http://3.148.115.134:3002/api/medicamentos/${codMedicamento}`, {
         method: 'DELETE',
       });
 

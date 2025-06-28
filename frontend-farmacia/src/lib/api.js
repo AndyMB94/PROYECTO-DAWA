@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3002/api';
+const BASE_URL = 'http://3.148.115.134:3002/api';
 
 // API Laboratorios
 export async function getLaboratorios() {
