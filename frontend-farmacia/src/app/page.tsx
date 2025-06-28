@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Pill, Building2, Package, Users, BarChart3, Heart } from 'lucide-react';
+import { Pill, Building2, Package, BarChart3, Heart } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
